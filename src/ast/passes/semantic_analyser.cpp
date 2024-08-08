@@ -1176,7 +1176,7 @@ void SemanticAnalyser::visit(Call &call)
           << "BPF_FUNC_d_path not available for your kernel version";
     }
 
-    if (check_varargs(call, 1, 1)) {
+    if (check_varargs(call, 1, 2)) {
       // Argument for path can be both record and pointer.
       // It's pointer when it's passed directly from the probe
       // argument, like: path(args.path))

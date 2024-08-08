@@ -2490,6 +2490,7 @@ void IRBuilderBPF::CreateHelperErrorCond(Value *ctx,
 void IRBuilderBPF::CreatePath(Value *ctx,
                               Value *buf,
                               Value *path,
+			      Value *sz,
                               const location &loc)
 {
   // int bpf_d_path(struct path *path, char *buf, u32 sz)
@@ -2499,7 +2500,7 @@ void IRBuilderBPF::CreatePath(Value *ctx,
   CallInst *call = CreateHelperCall(
       libbpf::bpf_func_id::BPF_FUNC_d_path,
       d_path_func_type,
-      { path, buf, getInt32(bpftrace_.config_.get(ConfigKeyInt::max_strlen)) },
+      { path, buf, sz },
       "d_path",
       &loc);
   CreateHelperErrorCond(ctx, call, libbpf::BPF_FUNC_d_path, loc);

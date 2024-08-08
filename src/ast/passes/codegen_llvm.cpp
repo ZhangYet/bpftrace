@@ -1,4 +1,5 @@
 #include "codegen_llvm.h"
+#include "config.h"
 
 #include <algorithm>
 #include <arpa/inet.h>
@@ -8,6 +9,7 @@
 #include <fstream>
 #include <limits>
 #include <llvm/IR/GlobalValue.h>
+#include <llvm/IR/Instruction.h>
 
 #if LLVM_VERSION_MAJOR <= 16
 #include <llvm-c/Transforms/IPO.h>
@@ -867,7 +869,21 @@ void CodegenLLVM::visit(Call &call)
     b_.CreateMemsetBPF(buf,
                        b_.getInt8(0),
                        bpftrace_.config_.get(ConfigKeyInt::max_strlen));
-    call.vargs.front()->accept(*this);
+    const uint64_t max_size = bpftrace_.config_.get(ConfigKeyInt::max_strlen);
+    Value *sz;
+    Value *max_sz = b_.getInt32(max_size);
+    if (call.vargs.size() > 1) {
+      auto &arg = *call.vargs.at(1);
+      auto scoped_del = accept(&arg);
+      Value *pr_sz = expr_;
+      Value *cmp = b_.CreateICmp(
+				 CmpInst::ICMP_ULE, pr_sz, max_sz, "size.cmp");
+      sz = b_.CreateSelect(cmp, pr_sz, max_sz, "size.select");
+    } else {
+      auto &arg = *call.vargs.at(0);
+      sz = b_.getInt32(bpftrace_.config_.get(ConfigKeyInt::max_strlen));
+    }
+
     b_.CreatePath(ctx_,
                   buf,
                   b_.CreateCast(expr_->getType()->isPointerTy()
@@ -875,6 +891,7 @@ void CodegenLLVM::visit(Call &call)
                                     : Instruction::IntToPtr,
                                 expr_,
                                 b_.GET_PTR_TY()),
+		  b_.CreateCast(Instruction::PtrToInt, sz, b_.getInt32Ty()),
                   call.loc);
     expr_ = buf;
   } else if (call.func == "kaddr") {
