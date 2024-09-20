@@ -2879,16 +2879,16 @@ std::tuple<Value *, CodegenLLVM::ScopedExprDeleter> CodegenLLVM::getMapKey(
           // We don't have enough visibility into where key comes from to safely
           // end its lifetime. It could be a variable, for example.
           alloca_created_here = false;
-	  std::cout << "[debug] enter 2880" << std::endl;
+	  std::cout << "[debug] enter CodegenLLVM::getMapKey 2882" << std::endl;
         }
       } else {
         key = b_.CreateAllocaBPF(expr->type, map.ident + "_key");
         if (expr->type.IsArrayTy() || expr->type.IsRecordTy()) {
           // We need to read the entire array/struct and save it
           b_.CreateProbeRead(ctx_, key, expr->type, expr_, expr->loc);
-	  std::cout << "[debug] enter 2887" << std::endl;
+	  std::cout << "[debug] enter CodegenLLVM::getMapKey 2889" << std::endl;
         } else {
-	  std::cout << "[debug] enter 2890" << std::endl;
+	  std::cout << "[debug] enter CodegenLLVM::getMapKey 2891" << std::endl;
           b_.CreateStore(
               b_.CreateIntCast(expr_, b_.getInt64Ty(), expr->type.IsSigned()),
               b_.CreatePointerCast(key, expr_->getType()->getPointerTo()));
