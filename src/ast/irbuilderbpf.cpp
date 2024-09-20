@@ -383,7 +383,7 @@ CallInst *IRBuilderBPF::CreateMapLookup(Map &map,
                                         Value *key,
                                         const std::string &name)
 {
-  std::cout << "[debug] enter CreateMapLookup " << std::endl;
+  std::cout << "[debug] enter CreateMapLookup 386" << std::endl;
   return createMapLookup(map.ident, key, name);
 }
 
@@ -391,6 +391,7 @@ CallInst *IRBuilderBPF::createMapLookup(const std::string &map_name,
                                         Value *key,
                                         const std::string &name)
 {
+  std::cout << "[debug] enter createMapLookup 394" << std::endl;
   return createMapLookup(map_name, key, GET_PTR_TY(), name);
 }
 
@@ -399,6 +400,7 @@ CallInst *IRBuilderBPF::createMapLookup(const std::string &map_name,
                                         PointerType *val_ptr_ty,
                                         const std::string &name)
 {
+  std::cout << "[debug] enter createMapLookup 403" << std::endl;
   Value *map_ptr = GetMapVar(map_name);
   // void *map_lookup_elem(struct bpf_map * map, void * key)
   // Return: Map value or NULL
