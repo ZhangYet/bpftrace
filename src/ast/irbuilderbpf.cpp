@@ -390,6 +390,7 @@ CallInst *IRBuilderBPF::createMapLookup(const std::string &map_name,
                                         Value *key,
                                         const std::string &name)
 {
+  std::cout << "[debug] map key type: " << key->getType().isCgroupPathTy() << std::endl;
   return createMapLookup(map_name, key, GET_PTR_TY(), name);
 }
 
