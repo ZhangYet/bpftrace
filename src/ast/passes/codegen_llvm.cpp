@@ -1187,6 +1187,7 @@ void CodegenLLVM::visit(Call &call)
     } else
       createPrintNonMapCall(call, async_ids_.non_map_print());
   } else if (call.func == "cgroup_path") {
+    std::cout << "[debug] visit(Call &call) cgroup_path" << std::endl;
     auto elements = AsyncEvent::CgroupPath().asLLVMType(b_);
     StructType *cgroup_path_struct = b_.GetStructType(call.func + "_t",
                                                       elements,
@@ -2871,6 +2872,7 @@ std::tuple<Value *, CodegenLLVM::ScopedExprDeleter> CodegenLLVM::getMapKey(
           b_.CreateMemcpyBPF(key, expr_, expr->type.GetSize());
         } else {
           key = expr_;
+	  
           // Call-ee freed
           scoped_del.disarm();
 

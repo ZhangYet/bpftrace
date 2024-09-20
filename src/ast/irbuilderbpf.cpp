@@ -383,6 +383,7 @@ CallInst *IRBuilderBPF::CreateMapLookup(Map &map,
                                         Value *key,
                                         const std::string &name)
 {
+  std::cout << "[debug] enter CreateMapLookup " << std::endl;
   return createMapLookup(map.ident, key, name);
 }
 
