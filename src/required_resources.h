@@ -96,6 +96,8 @@ public:
   std::vector<std::string> time_args;
   std::vector<std::string> strftime_args;
   std::vector<std::string> cgroup_path_args;
+  std::map<std::string, int> cgroup_path_filter_to_id;
+  std::map<int, std::string> cgroup_path_id_to_filter;
   std::vector<SizedType> non_map_print_args;
   std::vector<std::tuple<std::string, long>> skboutput_args_;
 

@@ -264,6 +264,28 @@ public:
   // Returns the integer type used to represent pointers in traced code.
   llvm::Type *getPointerStorageTy(AddrSpace as);
 
+  int getCgroupPathId(std::string filter) {
+    if (bpftrace_.resources.cgroup_path_filter_to_id.find(filter) ==
+	bpftrace_.resources.cgroup_path_filter_to_id.end())
+      return -1;
+    return bpftrace_.resources.cgroup_path_filter_to_id[filter];
+  }
+
+  void setCgroupPathId(std::string filter, int id) {
+    bpftrace_.resources.cgroup_path_filter_to_id[filter] = id;
+  }
+
+  std::string getFilter(int id) {
+    if (bpftrace_.resources.cgroup_path_id_to_filter.find(id) ==
+	bpftrace_.resources.cgroup_path_id_to_filter.end())
+      return "";
+    return bpftrace_.resources.cgroup_path_id_to_filter[id];
+  }
+
+  void setFilter(int id, std::string filter) {
+    bpftrace_.resources.cgroup_path_id_to_filter[id] = filter;
+  }
+
 private:
   Module &module_;
   BPFtrace &bpftrace_;

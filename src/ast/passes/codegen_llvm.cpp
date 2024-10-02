@@ -1194,12 +1194,26 @@ void CodegenLLVM::visit(Call &call)
     AllocaInst *buf = b_.CreateAllocaBPF(cgroup_path_struct,
                                          call.func + "_args");
 
+    std::string filter;
+    if (call.vargs.size() > 1) {
+      filter = bpftrace_.get_string_literal(call.vargs.at(1));
+    } else {
+      filter = "*";
+    }
+
+    int cgroup_path_id;
+    if (b_.getCgroupPathId(filter) < 0) {
+      cgroup_path_id = async_ids_.cgroup_path();
+      b_.setCgroupPathId(filter, cgroup_path_id);
+    } else
+      cgroup_path_id = b_.getCgroupPathId(filter);
+    
     // Store cgroup path event id
-    b_.CreateStore(b_.GetIntSameSize(async_ids_.cgroup_path(), elements.at(0)),
+    b_.CreateStore(b_.GetIntSameSize(cgroup_path_id, elements.at(0)),
                    b_.CreateGEP(cgroup_path_struct,
                                 buf,
                                 { b_.getInt64(0), b_.getInt32(0) }));
-
+    
     // Store cgroup id
     auto arg = call.vargs.at(0);
     auto scoped_del = accept(arg);
