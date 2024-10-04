@@ -389,6 +389,8 @@ static void parse_env(BPFtrace& bpftrace)
     extra_flags.push_back("-include");
     extra_flags.push_back("/bpftrace/include/" CLANG_WORKAROUNDS_H);
 
+    extra_flags.push_back("-mcpu=v3");
+
     for (auto dir : include_dirs) {
       extra_flags.push_back("-I");
       extra_flags.push_back(dir);
